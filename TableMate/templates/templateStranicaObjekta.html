@@ -1,0 +1,140 @@
+<!--Autor: Pavle Perovic-->
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Restaurant Name - Description</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    .restaurant-image {
+      max-width: 100%;
+      height: auto;
+      display: block;
+      margin: 0 auto;
+      border: 5px solid #ddd;
+      box-sizing: border-box;
+    }
+    .restaurant-name {
+      font-size: 32px;
+      font-weight: bold;
+      margin-top: 20px;
+      text-align: center;
+    }
+    .restaurant-description {
+      font-size: 18px;
+      line-height: 1.5;
+      margin-top: 10px;
+      text-align: center;
+    }
+    .rating {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 20px;
+    }
+    .rating input[type="radio"] {
+      display: none;
+    }
+    .rating input[type="radio"] + label {
+      font-size: 24px;
+      color: #ddd;
+      cursor: pointer;
+      margin-right: 10px;
+    }
+    .rating input[type="radio"]:checked + label {
+      color: gold;
+    }
+    .average-rating {
+      font-size: 20px;
+      font-weight: bold;
+      margin-top: 10px;
+      text-align: center;
+    }
+    .buttons {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 20px;
+    }
+    .button {
+      background-color: #408aeb;
+      color: #fff;
+      font-size: 16px;
+      font-weight: bold;
+      border: none;
+      padding: 10px 20px;
+      cursor: pointer;
+      margin-right: 10px;
+      transition: background-color 0.3s;
+    }
+    .button:hover {
+      background-color: purple;
+    }
+    .image-wrapper {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+    }
+
+    .image-wrapper img {
+      max-width: 100%;
+    }
+  </style>
+</head>
+    <body>
+      <div class="container">
+              <div class="image-wrapper">
+                  {% if objekat.getMojaSlikaObjekat %}
+                    <img src="{% static objekat.getMojaSlikaObjekat %}" class="restaurant-image" alt="">
+                  {% endif %}
+              </div>
+              <h1 class="restaurant-name">{{ objekat.naziv }}</h1>
+              <p class="restaurant-description">{{  objekat.opis }}</p>
+              {% if objekat.getMojaSlikaMenu %}
+                  <h1 class="restaurant-name">Menu</h1>
+                  <img src="{% static objekat.getMojaSlikaMenu %}">
+              {% endif %} }
+              {% if logged_in %}
+                <div class="rating">
+                      <input type="radio" name="rating" id="rating-1" value="1">
+                      <label for="rating-1">&#9733;</label>
+                      <input type="radio" name="rating" id="rating-2" value="2">
+                      <label for="rating-2">&#9733;</label>
+                      <input type="radio" name="rating" id="rating-3" value="3">
+                      <label for="rating-3">&#9733;</label>
+                      <input type="radio" name="rating" id="rating-4" value="4">
+                      <label for="rating-4">&#9733;</label>
+                      <input type="radio" name="rating" id="rating-5" value="5">
+                      <label for="rating-5">&#9733;</label>
+                      <span class="average-rating">{{ objekat.getAvgOcena }}</span>
+              </div>
+                <div class="buttons">
+                  <a href="{% url 'reserveTable' objekat.idobj %}"><button class="button">Reserve table</button></a>
+                  <a href="{% url 'reservePlace' objekat.idobj %}"><button class="button">Reserve the whole place</button></a>
+                  {% if prosledi %}
+                      <form method="post" action="{% url 'dodajOmiljeni' objekat.idobj %}">
+                            {% csrf_token %}
+                            <button type="submit" class = "button" name="dodajOmiljeni">Add to favorites</button>
+                      </form>
+                  {% endif %}
+                  {% if not prosledi %}
+                      <form method="post" action="{% url 'obrisiOmiljeni' objekat.idobj %}">
+                            {% csrf_token %}
+                            <button type="submit" class = "button" name="obrisiOmiljeni">Delete from favorites</button>
+                      </form>
+                  {% endif %}
+              </div>
+              {% endif %}
+      </div>
+    </body>
+</html>

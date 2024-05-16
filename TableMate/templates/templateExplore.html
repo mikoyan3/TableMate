@@ -1,0 +1,159 @@
+<!--Autor: Pavle Perovic-->
+{% load static %}
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Explore Page</title>
+    <style>
+      body{
+          font-family: Arial, sans-serif;
+          background-color: #f2f2f2;
+      }
+      h1{
+          text-align: center;
+          font-size: 36px;
+          margin-top: 50px;
+      }
+      .button-container{
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          margin-top: 50px;
+      }
+      .button{
+          padding: 10px 20px;
+          border-radius: 20px;
+          background-color: #408aeb;
+          color: white;
+          font-size: 16px;
+          margin: 10px;
+          text-decoration: none;
+          text-align: center;
+      }
+      .button:hover {
+          background-color: transparent;
+          color: black;
+          border: 1px solid #408aeb;
+      }
+      .container{
+          display: flex;
+          flex-wrap: wrap;
+          justify-content: center;
+          margin-top: 50px;
+      }
+      .card{
+          width: 300px;
+          margin: 20px;
+          background-color: white;
+          box-shadow: 0px 0px 5px 0px rgba(0,0,0,0.2);
+          text-align: center;
+          padding: 20px;
+      }
+      .card img{
+          width: 100%;
+          height: 200px;
+          object-fit: cover;
+          margin-bottom: 20px;
+      }
+      .card h2{
+          font-size: 24px;
+          margin-bottom: 10px;
+      }
+      .card p{
+          font-size: 16px;
+          margin-bottom: 20px;
+      }
+      .dropdown {
+        position: relative;
+        display: inline-block;
+      }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: #f9f9f9;
+            min-width: 160px;
+            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+            z-index: 1;
+        }
+
+        .dropdown-content a {
+            color: black;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+        }
+
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
+    </style>
+    <script>
+        var dropdowns = document.getElementsByClassName("dropdown");
+        var i;
+
+        for (i = 0; i < dropdowns.length; i++) {
+            dropdowns[i].addEventListener("click", function() {
+                this.classList.toggle("active");
+                var dropdownContent = this.getElementsByClassName("dropdown-content")[0];
+                if (dropdownContent.style.display === "block") {
+                    dropdownContent.style.display = "none";
+                } else {
+                    dropdownContent.style.display = "block";
+                }
+            });
+        }
+    </script>
+  </head>
+  <body>
+        <h1>Explore!</h1>
+        <div class="container">
+            <div class="dropdown">
+                <button class="button dropdown-toggle">Object type</button>
+                <div class="dropdown-content">
+                    <a href="{% url 'prikaziPabove' %}">Pubs</a>
+                    <a href="{% url 'prikaziRestorane' %}">Restaurants</a>
+                    <a href="{% url 'prikaziKlubove' %}">Clubs</a>
+                </div>
+            </div>
+            <div class="dropdown">
+                <button class="button dropdown-toggle">City filter</button>
+                <div class="dropdown-content">
+                    {% for grad in gradovi %}
+                        {% csrf_token %}
+                        <a href="{% url 'prikaziPoGradu' grad %}">{{ grad }}</a>
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="dropdown">
+                <button class="button dropdown-toggle">Cuisine filter</button>
+                <div class="dropdown-content">
+                    {% for kuhinja in kuhinje %}
+                        {% csrf_token %}
+                        <a href="{% url 'prikaziPoKuhinji' kuhinja %}">{{ kuhinja}}</a>
+                    {% endfor %}
+                </div>
+            </div>
+            {% if logged_in %}
+                <a href="{% url 'prikaziOmiljene' %}"><button class="button">Favorites</button></a>
+            {% endif %}
+            <a href="{% url 'prikaziPoReviews' %}"><button class="button">Based on reviews</button></a>
+            <a href="{% url 'prikaziPoPopularnosti' %}"><button class="button">Based on popularity</button></a>
+        </div>
+        <div class="container">
+            {% for objekat in objekti %}
+                <div class="card">
+                    {% if objekat.getMojaSlikaCard %}
+                        <img src="{% static objekat.getMojaSlikaCard %}">
+                    {% endif %}
+                    <h2>{{ objekat.naziv }}</h2>
+                    <p>{{ objekat.adresa }}</p>
+                    <form method="post" action="{% url 'prikaziOdgovarajuciSeeMore' objekat.idobj %}"> <!-- prosledjujemo idobj funkciji -->
+                        {% csrf_token %}
+                        <button type="submit" class = "button" name="prikaziOdgovarajuciSeeMore">See more</button>
+                    </form>
+                </div>
+            {% endfor %}
+        </div>
+  </body>
+</html>

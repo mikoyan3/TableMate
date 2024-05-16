@@ -1,0 +1,63 @@
+<!--Autor: Pavle Perovic-->
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+	<title>My Page</title>
+	<style>
+		.container {
+			max-width: 800px;
+			margin: 0 auto;
+			padding: 20px;
+			text-align: center;
+		}
+        .restaurant-image {
+      max-width: 100%;
+      height: auto;
+      display: block;
+      margin: 0 auto;
+      border: 5px solid #ddd;
+      box-sizing: border-box;
+    }
+		.img-wrapper {
+			margin: 20px 0;
+		}
+		.form {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			margin: 20px 0;
+		}
+		.form select {
+			margin: 10px 0;
+		}
+		.btn {
+			padding: 10px 20px;
+			background-color: #3498db;
+			color: #fff;
+			border: none;
+			border-radius: 4px;
+			cursor: pointer;
+		}
+		.btn:hover {
+			background-color: #2980b9;
+		}
+	</style>
+</head>
+<body>
+	<div class="container">
+		<div class="img-wrapper">
+            <img class="restaurant-image" src="{% static 'slike/stolovi.png' %}" alt="Restaurant Image">
+		</div>
+        <form class="form" action="{% url 'rezervisiSto' start_time|date:'Y-m-d H:i' end_time|date:'Y-m-d H:i' %}" method="POST">
+        {% csrf_token %}
+            <select id="stolovi" name="stolovi">
+                    {% for dostupan in dostupniStolovi %}
+                        <option value="{{ dostupan.idsto }}">{{ dostupan.idsto }} - {% if dostupan.dohTip %} {{ dostupan.dohTip }}{% endif %}</option>
+                    {% endfor %}
+            </select>
+			<button type="submit" class="btn">Submit</button>
+		</form>
+	</div>
+</body>
+</html>
